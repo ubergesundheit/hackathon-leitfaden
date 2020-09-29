@@ -3,7 +3,7 @@ name: release pdf
 on:
   push:
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'v[0-9]+.[0-9]+.[0-9]+.' # Push events to matching semver with v prefix
 
 jobs:
   build:
@@ -19,8 +19,14 @@ jobs:
             ./compileall.sh
 
       - name: Rename main.pdf
+        id: branch_info
         run: |
-            mv main.pdf "hackathon-leitfaden-${{ github.ref }}.pdf"
+            tag_name="${GITHUB_REF##*/}"
+            filename="hackathon-leitfaden-${tag_name}.pdf"
+            echo "##[set-output name=tag_name;]${tag_name}"
+            echo "##[set-output name=filename;]${filename}"
+
+            mv main.pdf "$filename"
 
       - name: Create Release
         id: create_release
@@ -29,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Hackathon Leitfaden ${{ github.ref }}
+          release_name: Hackathon Leitfaden ${{ steps.branch_info.outputs.tag_name }}
           draft: false
           prerelease: false
 
@@ -40,6 +46,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./hackathon-leitfaden-${{ github.ref }}.pdf
-          asset_name: hackathon-leitfaden-${{ github.ref }}.pdf
+          asset_path: ./${{ steps.branch_info.outputs.filename }}
+          asset_name: ${{ steps.branch_info.outputs.filename }}
           asset_content_type: application/pdf
