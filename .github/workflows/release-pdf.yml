@@ -3,7 +3,7 @@ name: release pdf
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+.' # Push events to matching semver with v prefix
+      - 'v[0-9]+\.[0-9]+\.[0-9]+\.' # Push events to matching semver with v prefix
 
 jobs:
   build:
