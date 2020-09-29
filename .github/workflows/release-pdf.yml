@@ -17,27 +17,29 @@ jobs:
         with:
           run: |
             ./compileall.sh
-            ls
-            # mv main.pdf "hackathon-leitfaden-${{ github.ref }}.pdf"
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Hackathon Leitfaden ${{ github.ref }}
-      #     draft: false
-      #     prerelease: false
+      - name: Rename main.pdf
+        run: |
+            mv main.pdf "hackathon-leitfaden-${{ github.ref }}.pdf"
 
-      # - name: Upload Release Asset
-      #   id: upload-release-asset
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./hackathon-leitfaden-${{ github.ref }}.pdf
-      #     asset_name: hackathon-leitfaden-${{ github.ref }}.pdf
-      #     asset_content_type: application/pdf
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Hackathon Leitfaden ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./hackathon-leitfaden-${{ github.ref }}.pdf
+          asset_name: hackathon-leitfaden-${{ github.ref }}.pdf
+          asset_content_type: application/pdf
